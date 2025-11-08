@@ -1,7 +1,7 @@
 #
 # Build
 #
-FROM debian:10 AS build
+FROM debian:bullseye AS build
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
