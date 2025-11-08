@@ -6,7 +6,7 @@ on:
       - dev
     paths:
       - '**.java'  # Only trigger on changes to Python files (**.py)
-      - '.github/workflows/shipping.yaml'  # Include workflow file changes
+      - '.github/workflows/shipping.yaml'  # Include workflow file changes 
 
   pull_request:
     branches:
