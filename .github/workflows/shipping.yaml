@@ -33,9 +33,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name:  Go install
+      - name:  Java Install
         run: |
-            sudo apt install openjdk-8-jdk |
+            sudo apt-get install openjdk 17 |
             java -version
 
       - name: Build Docker image
