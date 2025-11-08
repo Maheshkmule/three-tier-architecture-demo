@@ -6,7 +6,7 @@ on:
       - dev
     paths:
       - '**.js'
-      - '.github/workflows/cart.yaml'
+      - '.github/workflows/catalogue.yaml'
 
   pull_request:
     branches:
