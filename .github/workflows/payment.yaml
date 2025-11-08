@@ -3,7 +3,7 @@ name: Payment
 on:
   push:
     branches:
-      - master
+      - dev
     paths:
       - '**.py'  # Only trigger on changes to Python files (**.py)
       - '.github/workflows/payment.yaml'  # Include workflow file changes
