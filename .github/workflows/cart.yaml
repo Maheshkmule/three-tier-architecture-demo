@@ -38,10 +38,10 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: cart/package-lock.json
+          cache-dependency-path: ./cart/package-lock.json
 
       - name: Install dependencies
-        working-directory: cart
+        working-directory: ./cart
         run: npm install
 
       - name: Build Docker image
