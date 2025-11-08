@@ -33,11 +33,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name:  Go install
-        working-directory: ./shipping
-        run: |
-            sudo apt install openjdk-8-jdk |
-            java -version
+      # - name:  Go install
+      #   working-directory: ./shipping
+      #   run: |
+      #       sudo apt install openjdk-8-jdk |
+      #       java -version
 
       - name: Build Docker image
         working-directory: shipping
