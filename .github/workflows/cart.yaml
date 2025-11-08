@@ -33,12 +33,12 @@ jobs:
         with:
           fetch-depth: 0
         
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: ./cart/package-lock.json
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 18
+      #     cache: 'npm'
+      #     cache-dependency-path: ./cart/package-lock.json
 
       - name: Install dependencies
         working-directory: ./cart
