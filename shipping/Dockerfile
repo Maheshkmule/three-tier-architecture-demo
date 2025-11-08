@@ -1,27 +1,28 @@
 #
-# Build
+# Build Stage
 #
-FROM debian:bullseye AS build
+FROM ubuntu:22.04 AS build
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ca-certificates-java \
-        maven && \
+        openjdk-8-jdk \
+        maven \
+        ca-certificates && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    update-ca-certificates -f
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/shipping
 
 COPY pom.xml /opt/shipping/
 RUN mvn dependency:resolve
+
 COPY src /opt/shipping/src/
 RUN mvn package
 
 #
-# Run
+# Run Stage
 #
-FROM eclipse-temurin:8-jdk
+FROM eclipse-temurin:8-jdk-jammy
 
 EXPOSE 8080
 
@@ -32,5 +33,4 @@ ENV DB_HOST=mysql
 
 COPY --from=build /opt/shipping/target/shipping-1.0.jar shipping.jar
 
-CMD [ "java", "-Xmn256m", "-Xmx768m", "-jar", "shipping.jar" ]
-
+CMD ["java", "-Xmn256m", "-Xmx768m", "-jar", "shipping.jar"]
