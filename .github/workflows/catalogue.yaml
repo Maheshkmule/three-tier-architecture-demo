@@ -41,11 +41,11 @@ jobs:
       #     cache-dependency-path: ./cart/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./cart
+        working-directory: ./catalogue
         run: npm install
 
       - name: Build Docker image
-        working-directory: cart
+        working-directory: catalogue
         run: |
           docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
       - name: Azure Login
