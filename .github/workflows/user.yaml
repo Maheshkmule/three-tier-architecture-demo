@@ -3,7 +3,7 @@ name: User
 on:
   push:
     branches:
-      - master
+      - dev
     paths:
       - '**.js'  # Only trigger on changes to Python files (**.py)
       - '.github/workflows/user.yaml'  # Include workflow file changes
@@ -18,7 +18,15 @@ on:
 jobs:
   payment:
     name: Build and deploy user microservice
-    runs-on: [self-hosted]  # Use a standard runner instead of self-hosted
+    runs-on: ubuntu-latest
+
+    env:
+      ACR_NAME: acr98794tf47                     # 🔹 Replace with your ACR name (without .azurecr.io)
+      IMAGE_NAME: user                         # 🔹 Your microservice name
+      # AKS_RESOURCE_GROUP: rg-aks-dev           # 🔹 Your AKS resource group
+      # AKS_CLUSTER_NAME: aks-dev-cluster        # 🔹 Your AKS cluster name
+      # NAMESPACE: default                       # 🔹 Kubernetes namespace
+
 
     steps:
       - name: Checkout code 
@@ -27,16 +35,31 @@ jobs:
           fetch-depth: 0
 
       - name: NPM install
+        working-directory: ./user
         run: npm install 
 
       - name: Build Docker image
+        working-directory: user
         run: |
-          docker build -t user .  # Build image tagged as 'payment' from current directory
+          docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} 
+          # 👇 Example secret value (JSON format):
+          # {"clientId":"<id>","clientSecret":"<secret>","subscriptionId":"<sub>","tenantId":"<tenant>"}
 
-      - name: Docker Login (use secrets)
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: ACR Login
+        run: az acr login --name $ACR_NAME
 
-      - name: Docker Push
+      - name: Push Docker image to ACR
         run: |
-          docker tag user ${name}/user:latest
-          docker user ${name}/user:latest
+          docker push $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
+      # - name: Get AKS credentials
+      #   run: |
+      #     az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --overwrite-existing
+
+      # - name: Deploy to AKS
+      #   run: |
+      #     kubectl set image deployment/$IMAGE_NAME $IMAGE_NAME=$ACR_NAME.azurecr.io/$IMAGE_NAME:latest -n $NAMESPACE
+      #     kubectl rollout status deployment/$IMAGE_NAME -n $NAMESPACE
