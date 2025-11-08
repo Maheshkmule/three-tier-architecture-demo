@@ -52,7 +52,4 @@ jobs:
       #     kubectl set image deployment/$IMAGE_NAME $IMAGE_NAME=$ACR_NAME.azurecr.io/$IMAGE_NAME:latest -n $NAMESPACE
       #     kubectl rollout status deployment/$IMAGE_NAME -n $NAMESPACE
 
-      # Step 9: Verify rollout
-      - name: Verify rollout
-        run: |
-          kubectl rollout status deployment/frontend -n ${{ env.NAMESPACE }}
+
