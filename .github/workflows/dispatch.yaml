@@ -3,7 +3,7 @@ name: Dispatch
 on:
   push:
     branches:
-      - master
+      - dev
     paths:
       - '**.go'  # Only trigger on changes to Python files (**.py)
       - '.github/workflows/dispatch.yaml'  # Include workflow file changes
@@ -18,8 +18,15 @@ on:
 jobs:
   payment:
     name: Build and deploy dispatch microservice
-    runs-on: [self-hosted]  # Use a standard runner instead of self-hosted
+    runs-on: ubuntu-latest
 
+    env:
+      ACR_NAME: acr98794tf47                     # 🔹 Replace with your ACR name (without .azurecr.io)
+      IMAGE_NAME: dispatch                         # 🔹 Your microservice name
+      # AKS_RESOURCE_GROUP: rg-aks-dev           # 🔹 Your AKS resource group
+      # AKS_CLUSTER_NAME: aks-dev-cluster        # 🔹 Your AKS cluster name
+      # NAMESPACE: default                       # 🔹 Kubernetes namespace
+      
     steps:
       - name: Checkout code 
         uses: actions/checkout@v2
@@ -27,18 +34,33 @@ jobs:
           fetch-depth: 0
 
       - name:  Go install
+        working-directory: ./dispatch
         run: |
             curl -sL https://dl.google.com/go/go1.18.linux-amd64.tar.gz |
             export PATH=$PATH:/home/runner/go/bin
 
       - name: Build Docker image
+        working-directory: dispatch
         run: |
-          docker build -t payment .  # Build image tagged as 'payment' from current directory
+          docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} 
+          # 👇 Example secret value (JSON format):
+          # {"clientId":"<id>","clientSecret":"<secret>","subscriptionId":"<sub>","tenantId":"<tenant>"}
 
-      - name: Docker Login (use secrets)
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: ACR Login
+        run: az acr login --name $ACR_NAME
 
-      - name: Docker Push
+      - name: Push Docker image to ACR
         run: |
-          docker tag dispatch ${name}/dispatch:latest
-          docker push ${name}/dispatch:latest
+          docker push $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
+      # - name: Get AKS credentials
+      #   run: |
+      #     az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --overwrite-existing
+
+      # - name: Deploy to AKS
+      #   run: |
+      #     kubectl set image deployment/$IMAGE_NAME $IMAGE_NAME=$ACR_NAME.azurecr.io/$IMAGE_NAME:latest -n $NAMESPACE
+      #     kubectl rollout status deployment/$IMAGE_NAME -n $NAMESPACE
