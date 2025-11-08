@@ -1,5 +1,5 @@
 #
-# Build Stage
+# Build
 #
 FROM ubuntu:22.04 AS build
 
@@ -20,7 +20,7 @@ COPY src /opt/shipping/src/
 RUN mvn package
 
 #
-# Run Stage
+# Run
 #
 FROM eclipse-temurin:8-jdk-jammy
 
