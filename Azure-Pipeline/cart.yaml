@@ -1,0 +1,81 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  appName: "nodejs-app"
+  acrName: "myacr12345"            # ACR name (without .azurecr.io)
+  imageName: "$(appName)"
+  tag: "$(Build.BuildId)"
+  aksResourceGroup: "rg-aks-dev"
+  aksClusterName: "aks-dev-cluster"
+  helmChartPath: "helm/nodejs-app"
+  namespace: "default"
+
+  imageFullName: "$(acrName).azurecr.io/$(imageName):$(tag)"
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: Build
+    displayName: "Build & Push Docker Image"
+    jobs:
+      - job: Build
+        displayName: "Build Docker Image"
+        steps:
+          - checkout: self
+
+          # Use Node.js to build the app
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: "Use Node.js 18"
+
+          - script: |
+              npm install
+              npm run build
+              npm test
+            displayName: "Build & Test Application"
+
+          # Login to ACR and push image
+          - task: AzureCLI@2
+            displayName: "Build and Push Docker Image to ACR"
+            inputs:
+              azureSubscription: "Your-Service-Connection-Name"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az acr login --name $(acrName)
+                docker build -t $(imageFullName) .
+                docker push $(imageFullName)
+
+  - stage: Deploy
+    displayName: "Deploy to AKS via Helm"
+    dependsOn: Build
+    jobs:
+      - job: HelmDeploy
+        displayName: "Helm Deploy"
+        steps:
+          - task: AzureCLI@2
+            displayName: "Helm Deploy to AKS"
+            inputs:
+              azureSubscription: "Your-Service-Connection-Name"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                echo "Getting AKS credentials..."
+                az aks get-credentials \
+                  --resource-group $(aksResourceGroup) \
+                  --name $(aksClusterName) \
+                  --overwrite-existing
+
+                echo "Deploying with Helm..."
+                helm upgrade --install $(appName) $(helmChartPath) \
+                  --namespace $(namespace) \
+                  --set image.repository=$(acrName).azurecr.io/$(imageName) \
+                  --set image.tag=$(tag) \
+                  --set image.pullPolicy=IfNotPresent
+
+                echo "Deployment successful!"
