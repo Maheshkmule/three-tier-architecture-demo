@@ -36,7 +36,7 @@ jobs:
       # - name:  Java Install
       #   run: |
       #       sudo apt-get install openjdk 17 |
-      #       java -version
+      #       java -version 
 
       - name: Build Docker image
         working-directory: shipping
