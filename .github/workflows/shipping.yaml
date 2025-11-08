@@ -25,7 +25,7 @@ jobs:
       IMAGE_NAME: shipping                         # 🔹 Your microservice name
       # AKS_RESOURCE_GROUP: rg-aks-dev           # 🔹 Your AKS resource group
       # AKS_CLUSTER_NAME: aks-dev-cluster        # 🔹 Your AKS cluster name
-      # NAMESPACE: default                       # 🔹 Kubernetes namespace 
+      # NAMESPACE: default                       # 🔹 Kubernetes namespace
 
     steps:
       - name: Checkout code 
