@@ -33,10 +33,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name:  Java Install
-        run: |
-            sudo apt-get install openjdk 17 |
-            java -version
+      # - name:  Java Install
+      #   run: |
+      #       sudo apt-get install openjdk 17 |
+      #       java -version
 
       - name: Build Docker image
         working-directory: shipping
