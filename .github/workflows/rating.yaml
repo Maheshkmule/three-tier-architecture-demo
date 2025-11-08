@@ -9,12 +9,12 @@ on:
 
 jobs:
   cart:
-    name: Build and Deploy Cart Microservice
+    name: Build and Deploy ratings Microservice
     runs-on: ubuntu-latest
 
     env:
       ACR_NAME: acr98794tf47                     # 🔹 Replace with your ACR name (without .azurecr.io)
-      IMAGE_NAME: rating                         # 🔹 Your microservice name
+      IMAGE_NAME: ratings                         # 🔹 Your microservice name
       # AKS_RESOURCE_GROUP: rg-aks-dev           # 🔹 Your AKS resource group
       # AKS_CLUSTER_NAME: aks-dev-cluster        # 🔹 Your AKS cluster name
       # NAMESPACE: default                       # 🔹 Kubernetes namespace
@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        working-directory: rating
+        working-directory: ratings
         run: |
           docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
 
