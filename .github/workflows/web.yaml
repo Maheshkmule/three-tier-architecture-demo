@@ -1,4 +1,4 @@
-name: Build and Deploy Frontend to AKS
+name: Build and Deploy Frontend
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   cart:
-    name: Build and Deploy Cart Microservice
+    name: Build and Deploy Frontend web Microservice
     runs-on: ubuntu-latest
 
     env:
