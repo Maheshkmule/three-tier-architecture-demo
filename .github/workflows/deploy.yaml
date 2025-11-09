@@ -6,7 +6,8 @@ on:
       - dev
     paths:
       - '.github/workflows/deploy.yaml'
-
+  workflow_dispatch:
+  
 env:
   ACR_NAME: acr98794tf47                  # Replace with your ACR name
   ACR_LOGIN_SERVER: acr98794tf47.azurecr.io
