@@ -22,7 +22,7 @@ jobs:
 
     env:
       ACR_NAME: acr98794tf47                     # 🔹 Replace with your ACR name (without .azurecr.io)
-      IMAGE_NAME: user                         # 🔹 Your microservice name
+      IMAGE_NAME: rs-user                         # 🔹 Your microservice name
       # AKS_RESOURCE_GROUP: rg-aks-dev           # 🔹 Your AKS resource group
       # AKS_CLUSTER_NAME: aks-dev-cluster        # 🔹 Your AKS cluster name
       # NAMESPACE: default                       # 🔹 Kubernetes namespace
