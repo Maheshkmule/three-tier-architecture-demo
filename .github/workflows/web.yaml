@@ -27,7 +27,7 @@ jobs:
       - name: Build Docker image
         working-directory: web
         run: |
-          docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
+          docker build -t $ACR_NAME.azurecr.io/robotshop/$IMAGE_NAME:latest .
 
       - name: Azure Login
         uses: azure/login@v1
@@ -41,7 +41,7 @@ jobs:
 
       - name: Push Docker image to ACR
         run: |
-          docker push $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
+          docker push $ACR_NAME.azurecr.io/robotshop/$IMAGE_NAME:latest
 
       # - name: Get AKS credentials
       #   run: |
