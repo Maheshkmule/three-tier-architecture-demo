@@ -47,7 +47,7 @@ jobs:
       - name: Build Docker image
         working-directory: cart
         run: |
-          docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
+          docker build -t $ACR_NAME.azurecr.io/robotshop/$IMAGE_NAME:latest .
 
       - name: Azure Login
         uses: azure/login@v1
