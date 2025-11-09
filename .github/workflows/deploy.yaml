@@ -1,12 +1,16 @@
 name: Deploy to AKS using Helm
 
 on:
-  push:
-    branches:
-      - dev
-    paths:
-      - '.github/workflows/deploy.yaml'
   workflow_dispatch:
+    inputs:
+      target_branch:
+        description: 'Select the branch to run the workflow on'
+        required: true
+        default: 'main' # Or your default branch name
+        type: choice
+        options:
+          - master
+          - dev
   
 env:
   ACR_NAME: acr98794tf47                  # Replace with your ACR name
