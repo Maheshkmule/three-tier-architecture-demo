@@ -1,0 +1,49 @@
+name: Build and Deploy Frontend to AKS using Helm
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'frontend/**'
+      - 'helm/frontend/**'
+      - '.github/workflows/deploy.yaml'
+
+env:
+  ACR_NAME: acr98794tf47                  # Replace with your ACR name
+  ACR_LOGIN_SERVER: acr98794tf47.azurecr.io
+  AKS_RESOURCE_GROUP: rg-aks-terraform  # Replace with your RG
+  AKS_CLUSTER_NAME: aks-terraform-cluster98794       # Replace with your AKS cluster
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Azure login
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Step 6: Get AKS credentials
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --overwrite-existing
+
+      # Step 7: Set up Helm
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.2
+
+      # Step 8: Deploy using Helm
+      - name: Deploy to AKS using Helm
+        working-directory: ./AKS/helm
+        run: |
+               kubectl create ns robot-shop
+               helm install robot-shop --namespace robot-shop .
+
